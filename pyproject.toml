@@ -1,0 +1,26 @@
+[project]
+name = "slot-data-gen"
+version = "0.1.0"
+description = "Synthetic data generation for slot-filling tasks via LLMs"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "openai>=1.50.0",
+    "tqdm>=4.66.0",
+    "python-dotenv>=1.0.0",
+    "black[jupyter]>=26.5.1",
+    "ipykernel>=7.2.0",
+]
+
+[project.optional-dependencies]
+notebook = [
+    "jupyter>=1.0.0",
+    "ipykernel>=6.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["slot_data_gen"]
