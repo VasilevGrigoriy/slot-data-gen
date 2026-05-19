@@ -16,10 +16,9 @@ Output: pretty-printed JSON array.
 
 ## Install
 
-Requires Python ≥ 3.10 and [uv](https://docs.astral.sh/uv/).
+Requires Python ≥ 3.10 and [uv](https://docs.astral.sh/uv/). To install dependencies from project root run this command:
 
 ```bash
-cd slot-data-gen
 uv sync
 cp .env.example .env
 ```
