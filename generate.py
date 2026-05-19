@@ -21,7 +21,7 @@ def parse_args() -> argparse.Namespace:
         required=True,
         help='Slot types separated by ";" (e.g. "city;date;n_guests").',
     )
-    p.add_argument("--out", required=True, type=Path, help="Output JSONL file path.")
+    p.add_argument("--out", required=True, type=Path, help="Output JSON file path.")
     p.add_argument(
         "--model", default="deepseek-chat", help="Model id (default: deepseek-chat)."
     )
@@ -34,7 +34,6 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--n-per-combo", type=int, default=20, help="Samples per combination (Stage 2)."
     )
-    p.add_argument("--prompt-style", choices=["synergetic", "json"], default="json")
     p.add_argument(
         "--filter",
         choices=["none", "llm_judge"],
@@ -71,7 +70,6 @@ def main() -> None:
         out_path=args.out,
         stage1_n_combos=args.n_combos,
         stage2_n_samples_per_combo=args.n_per_combo,
-        prompt_style=args.prompt_style,
         filter_strategy=args.filter_strategy,
     )
 

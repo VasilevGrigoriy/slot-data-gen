@@ -10,16 +10,8 @@ from tqdm.auto import tqdm
 from slot_data_gen.io import save_json
 from slot_data_gen.judge import llm_judge
 from slot_data_gen.model import BaseLLM, GenConfig
-from slot_data_gen.parse import (
-    parse_stage1_combos,
-    parse_stage2_freeform,
-    parse_stage2_json,
-)
-from slot_data_gen.prompts import (
-    build_stage1_prompt,
-    build_stage2_prompt_freeform,
-    build_stage2_prompt_json,
-)
+from slot_data_gen.parse import parse_stage1_combos, parse_stage2_json
+from slot_data_gen.prompts import build_stage1_prompt, build_stage2_prompt_json
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +23,6 @@ class GenJob:
     out_path: Path
     stage1_n_combos: int = 10
     stage2_n_samples_per_combo: int = 20
-    prompt_style: Literal["synergetic", "json"] = "json"
     filter_strategy: Literal["none", "llm_judge"] = "none"
 
 
@@ -43,12 +34,7 @@ def run_generation(
     judge_cfg: GenConfig | None = None,
 ) -> list[dict[str, Any]]:
     logger.info("=== Generation pipeline started ===")
-    logger.info(
-        "Intent: %s | prompt_style: %s | filter: %s",
-        job.target_intent,
-        job.prompt_style,
-        job.filter_strategy,
-    )
+    logger.info("Intent: %s | filter: %s", job.target_intent, job.filter_strategy)
     logger.info("Slot types (%d): %s", len(job.slot_type_set), job.slot_type_set)
 
     use_judge = job.filter_strategy == "llm_judge"
@@ -77,18 +63,11 @@ def run_generation(
         job.stage2_n_samples_per_combo,
     )
     for combo in tqdm(combos, desc="Stage 2: combos"):
-        if job.prompt_style == "json":
-            p = build_stage2_prompt_json(
-                job.target_intent, combo, job.stage2_n_samples_per_combo
-            )
-            raw = llm.generate(p, llm_cfg)
-            samples = parse_stage2_json(raw)
-        else:
-            p = build_stage2_prompt_freeform(
-                job.target_intent, combo, job.stage2_n_samples_per_combo
-            )
-            raw = llm.generate(p, llm_cfg)
-            samples = parse_stage2_freeform(raw)
+        p = build_stage2_prompt_json(
+            job.target_intent, combo, job.stage2_n_samples_per_combo
+        )
+        raw = llm.generate(p, llm_cfg)
+        samples = parse_stage2_json(raw)
 
         total_generated += len(samples)
 

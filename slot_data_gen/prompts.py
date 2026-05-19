@@ -26,35 +26,6 @@ Output format (use EXACTLY these two lines, repeat 10 times; no markdown, no bol
 """
 
 
-def build_stage2_prompt_freeform(
-    domain: str, slot_combo: list[str], n_samples: int
-) -> str:
-    combo = ";".join(slot_combo)
-    return f"""Stage 2: Data Synthesis
-Task Description:
-First, given a selected set of slot types and a domain, you need to provide a corresponding slot value
-for each slot type. Then, using these related slot values, generate a user query with a given domain.
-Finally, annotate the query using the IOB2 format (BIO tags) aligned to whitespace tokenization.
-
-Conditions:
-1. The user query cannot contain words corresponding to slots other than the selected slot types.
-2. The sentence can only contain slot combinations of slot values. (no extra slot values)
-3. Generate samples as diverse as possible.
-
-Input:
-(domain): {domain}
-(slot type combination): {combo}
-
-Please generate {n_samples} samples.
-
-Output format (repeat {n_samples} times):
-(type</res>value): slot1</res>value1;slot2</res>value2;...
-(query): ...
-(tokens): token1 token2 ...
-(tags): O B-slot1 I-slot1 ...
-"""
-
-
 def build_stage2_prompt_json(domain: str, slot_combo: list[str], n_samples: int) -> str:
     schema = {
         "domain": domain,

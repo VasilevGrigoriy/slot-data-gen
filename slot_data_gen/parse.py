@@ -114,46 +114,6 @@ def parse_stage2_json(text: str) -> list[dict]:
     return [strip_punct_tokens(s) for s in samples]
 
 
-def _parse_kv_line(line: str) -> dict[str, str]:
-    out: dict[str, str] = {}
-    chunks = [c.strip() for c in line.split(";") if c.strip()]
-    for ch in chunks:
-        if "</res>" not in ch:
-            continue
-        t, v = ch.split("</res>", 1)
-        out[t.strip()] = v.strip()
-    return out
-
-
-def parse_stage2_freeform(text: str) -> list[dict]:
-    samples: list[dict] = []
-    cur: dict = {}
-
-    def flush():
-        nonlocal cur
-        if not cur:
-            return
-        if "tokens" in cur and "tags" in cur and len(cur["tokens"]) == len(cur["tags"]):
-            samples.append(cur)
-        cur = {}
-
-    for line in text.splitlines():
-        s = line.strip()
-        if s.startswith("(type</res>value):"):
-            flush()
-            cur = {}
-            cur["slot_values_map"] = _parse_kv_line(s.split(":", 1)[1].strip())
-        elif s.startswith("(query):"):
-            cur["query"] = s.split(":", 1)[1].strip()
-        elif s.startswith("(tokens):"):
-            cur["tokens"] = s.split(":", 1)[1].strip().split()
-        elif s.startswith("(tags):"):
-            cur["tags"] = s.split(":", 1)[1].strip().split()
-
-    flush()
-    return [strip_punct_tokens(s) for s in samples]
-
-
 def bio_to_spans(tokens: list[str], tags: list[str]) -> list[dict[str, Any]]:
     spans: list[dict[str, Any]] = []
     cur_type: str | None = None
