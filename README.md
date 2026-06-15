@@ -1,15 +1,17 @@
 # slot-data-gen
 
+*[Русская версия](README.ru.md)*
+
 Synthetic data generation for unseen slot-filling tasks. 
 
-You bring two things — an ***intent name*** (string) and a ***list of slot types*** — and the tool generates BIO-annotated training data using any OpenAI-compatible API.
+You bring two things - an ***intent name*** (string) and a ***list of slot types*** - and the tool generates BIO-annotated training data using any OpenAI-compatible API.
 
 ## How it works
 
 Two-stage pipeline (after [Li et al., ACL 2025](https://aclanthology.org/2025.findings-acl.1097/)):
 
-1. **Stage 1** — the LLM proposes N realistic combinations of your slot types.
-2. **Stage 2** — for each combination, the LLM synthesizes M user utterances and BIO tags.
+1. **Stage 1** - the LLM proposes N realistic combinations of your slot types.
+2. **Stage 2** - for each combination, the LLM synthesizes M user utterances and BIO tags.
 3. *(Optional)* **LLM-as-a-judge** filter validates each sample on 4 criteria: plausibility, span correctness, tag cleanliness, missing-tag check.
 
 Output: pretty-printed JSON array.
